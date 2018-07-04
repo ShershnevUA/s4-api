@@ -5,8 +5,13 @@ index:
     path: /
     defaults: { _controller: 'App\Controller\DefaultController::index' }
 
-rest_controller:
+user_controller:
     resource: 'App\Controller\UserController'
+    type: annotation
+    prefix: /
+
+chanel_controller:
+    resource: 'App\Controller\ChanelController'
     type: annotation
     prefix: /
 

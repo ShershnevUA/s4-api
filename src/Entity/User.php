@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Serializable;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -40,6 +42,9 @@ class User implements UserInterface, Serializable
      */
     private $password;
 
+    /**
+     * @var
+     */
     private $plainPassword;
 
     /**
@@ -61,25 +66,53 @@ class User implements UserInterface, Serializable
     private $roles;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Message", mappedBy="author", orphanRemoval=true)
+     */
+    private $messages;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Chanel", mappedBy="owner", orphanRemoval=true)
+     */
+    private $channels;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Chanel", mappedBy="members")
+     */
+    private $memberInChannels;
+
+    /**
      * User constructor.
      */
     public function __construct()
     {
         $this->isActive = true;
         $this->roles = ['ROLE_USER'];
+        $this->messages = new ArrayCollection();
+        $this->channels = new ArrayCollection();
+        $this->memberInChannels = new ArrayCollection();
     }
 
 
+    /**
+     * @return mixed
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * @return null|string
+     */
     public function getUsername(): ?string
     {
         return $this->username;
     }
 
+    /**
+     * @param string $username
+     * @return User
+     */
     public function setUsername(string $username): self
     {
         $this->username = $username;
@@ -87,11 +120,18 @@ class User implements UserInterface, Serializable
         return $this;
     }
 
+    /**
+     * @return null|string
+     */
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
+    /**
+     * @param string $password
+     * @return User
+     */
     public function setPassword(string $password): self
     {
         $this->password = $password;
@@ -99,11 +139,18 @@ class User implements UserInterface, Serializable
         return $this;
     }
 
+    /**
+     * @return null|string
+     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
+    /**
+     * @param string $email
+     * @return User
+     */
     public function setEmail(string $email): self
     {
         $this->email = $email;
@@ -111,11 +158,18 @@ class User implements UserInterface, Serializable
         return $this;
     }
 
+    /**
+     * @return bool|null
+     */
     public function getIsActive(): ?bool
     {
         return $this->isActive;
     }
 
+    /**
+     * @param bool $isActive
+     * @return User
+     */
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
@@ -192,7 +246,7 @@ class User implements UserInterface, Serializable
      * and populated in any number of different ways when the user object
      * is created.
      *
-     * @return (Role|string)[] The user roles
+     * @return array (Role|string)[] The user roles
      */
     public function getRoles()
     {
@@ -220,5 +274,119 @@ class User implements UserInterface, Serializable
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    /**
+     * @return Collection|Message[]
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    /**
+     * @param Message $message
+     * @return User
+     */
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages[] = $message;
+            $message->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Message $message
+     * @return User
+     */
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->contains($message)) {
+            $this->messages->removeElement($message);
+            // set the owning side to null (unless already changed)
+            if ($message->getAuthor() === $this) {
+                $message->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Chanel[]
+     */
+    public function getChanels(): Collection
+    {
+        return $this->channels;
+    }
+
+    /**
+     * @param Chanel $chanel
+     * @return User
+     */
+    public function addChanel(Chanel $chanel): self
+    {
+        if (!$this->channels->contains($chanel)) {
+            $this->channels[] = $chanel;
+            $chanel->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Chanel $chanel
+     * @return User
+     */
+    public function removeChanel(Chanel $chanel): self
+    {
+        if ($this->channels->contains($chanel)) {
+            $this->channels->removeElement($chanel);
+            // set the owning side to null (unless already changed)
+            if ($chanel->getOwner() === $this) {
+                $chanel->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Chanel[]
+     */
+    public function getMemberInChanels(): Collection
+    {
+        return $this->memberInChannels;
+    }
+
+    /**
+     * @param Chanel $memberInChanel
+     * @return User
+     */
+    public function addMemberInChanel(Chanel $memberInChanel): self
+    {
+        if (!$this->memberInChannels->contains($memberInChanel)) {
+            $this->memberInChannels[] = $memberInChanel;
+            $memberInChanel->addMember($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Chanel $memberInChanel
+     * @return User
+     */
+    public function removeMemberInChanel(Chanel $memberInChanel): self
+    {
+        if ($this->memberInChannels->contains($memberInChanel)) {
+            $this->memberInChannels->removeElement($memberInChanel);
+            $memberInChanel->removeMember($this);
+        }
+
+        return $this;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Chanel;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -19,32 +20,19 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-//    /**
-//     * @return User[] Returns an array of User objects
-//     */
-    /*
-    public function findByExampleField($value)
+    public function searchInChanel( string $query, Chanel $chanel )
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $qb = $this->createQueryBuilder('u')
+            ->innerJoin('u.memberInChannels', 'ch')
+            ->where('LOWER(u.username) LIKE LOWER(:q)')
+            ->orWhere('LOWER(u.email) LIKE LOWER(:q)')
+            ->andWhere( 'ch = :chanel' )
+            ->setMaxResults(50)
+            ->setParameters([
+                'q'     => $query . '%',
+                'chanel'    => $chanel
+            ]);
 
-    /*
-    public function findOneBySomeField($value): ?User
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $qb->getQuery()->getResult();
     }
-    */
 }

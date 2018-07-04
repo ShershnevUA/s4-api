@@ -103,4 +103,8 @@ class UserService
             "token" => $this->JWTManager->create($user)
             ], Response::HTTP_OK);
     }
+
+    public function usersSerch($request)
+    {
+    }
 }

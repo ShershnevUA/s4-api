@@ -7,12 +7,15 @@ use Serializable;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use JMS\Serializer\Annotation as JMSAnnotation;
+
 
 /**
  * @ORM\Table(name="users")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(fields="email", message="Email already taken")
  * @UniqueEntity(fields="username", message="Username already taken")
+ * @JMSAnnotation\ExclusionPolicy("all")
  */
 class User implements UserInterface, Serializable
 {
@@ -20,13 +23,15 @@ class User implements UserInterface, Serializable
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @JMSAnnotation\Expose
+     * @JMSAnnotation\Groups("default")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=128, unique=true)
      * @Assert\NotBlank()
-     * @Assert\Email()
+     * @JMSAnnotation\Expose
      */
     private $username;
 
@@ -35,9 +40,13 @@ class User implements UserInterface, Serializable
      */
     private $password;
 
+    private $plainPassword;
+
     /**
      * @ORM\Column(type="string", length=255, unique=true)
+     * @Assert\Email()
      * @Assert\NotBlank()
+     * @JMSAnnotation\Expose
      */
     private $email;
 
@@ -113,6 +122,23 @@ class User implements UserInterface, Serializable
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * @param mixed $plainPassword
+     */
+    public function setPlainPassword($plainPassword): void
+    {
+        $this->plainPassword = $plainPassword;
+    }
+
 
     /**
      * String representation of object

@@ -4,3 +4,12 @@
 index:
     path: /
     defaults: { _controller: 'App\Controller\DefaultController::index' }
+
+rest_controller:
+    resource: 'App\Controller\UserController'
+    type: annotation
+    prefix: /
+
+login_check:
+    path:     /login
+    methods:  [POST]

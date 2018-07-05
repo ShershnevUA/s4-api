@@ -19,23 +19,14 @@ class ChanelController extends FOSRestController
      * @var ChanelService
      */
     private $chanelService;
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
 
     /**
      * ChanelController constructor.
      * @param ChanelService $chanelService
-     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(
-        ChanelService $chanelService,
-        TokenStorageInterface $tokenStorage
-    )
+    public function __construct( ChanelService $chanelService )
     {
         $this->chanelService = $chanelService;
-        $this->tokenStorage = $tokenStorage;
     }
 
 
@@ -46,7 +37,7 @@ class ChanelController extends FOSRestController
      */
     public function post( Request $request )
     {
-        return $this->chanelService->createChanel( $request, $this->tokenStorage->getToken()->getUser() );
+        return $this->chanelService->createChanel( $request, $this->getUser() );
     }
 
     /**
@@ -58,7 +49,7 @@ class ChanelController extends FOSRestController
      */
     public function chanelAddMember( Request $request, Chanel $chanel )
     {
-        return $this->chanelService->addMember( $request, $chanel, $this->tokenStorage->getToken()->getUser() );
+        return $this->chanelService->addMember( $request, $chanel, $this->getUser() );
     }
 
     /**
@@ -71,12 +62,13 @@ class ChanelController extends FOSRestController
      */
     public function chanelDeleteMember( Chanel $chanel, User $member )
     {
-        return $this->chanelService->deleteMember( $member, $chanel, $this->tokenStorage->getToken()->getUser() );
+        return $this->chanelService->deleteMember( $member, $chanel, $this->getUser() );
     }
 
     /**
      * @Rest\Get("/channels/{chanel}/search-member")
      * @ParamConverter("chanel", class="App\Entity\Chanel")
+     * @Rest\View( serializerGroups={"users_list"})
      * @param Request $request
      * @param Chanel $chanel
      * @return
@@ -87,6 +79,7 @@ class ChanelController extends FOSRestController
 
     /**
      * @Rest\Get("/channels")
+     * @Rest\View( serializerGroups={"list_channels"})
      * @param Request $request
      * @return
      */

@@ -9,6 +9,7 @@
 namespace App\Service;
 
 
+use App\Entity\Chanel;
 use App\Entity\User;
 use App\Form\UserType;
 use Doctrine\ORM\EntityManager;
@@ -101,10 +102,13 @@ class UserService
         return new View([
             'message' => "User has been created",
             "token" => $this->JWTManager->create($user)
-            ], Response::HTTP_OK);
+            ], Response::HTTP_OK
+        );
     }
 
-    public function usersSerch($request)
+    public function getMyChannels( $user )
     {
+        $result = $this->entityManager->getRepository(Chanel::class)->getMyChannels( $user );
+        return new View( $result, Response::HTTP_OK);
     }
 }

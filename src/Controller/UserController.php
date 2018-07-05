@@ -32,7 +32,7 @@ class UserController extends FOSRestController
 
     /**
      * @Rest\Get("/users")
-     * @Rest\View(templateVar="users")
+     * @Rest\View(templateVar="users", serializerGroups={"users_list"})
      * @param Request $request
      * @return View
      */
@@ -44,7 +44,7 @@ class UserController extends FOSRestController
     /**
      * @Rest\Get("/users/{user}")
      * @ParamConverter("user", class="App\Entity\User")
-     * @Rest\View(templateVar="user")
+     * @Rest\View(templateVar="user", serializerGroups={"single_user"})
      * @param User $user
      * @return User
      */
@@ -63,5 +63,15 @@ class UserController extends FOSRestController
     public function postUser( Request $request )
     {
         return $this->userService->registration($request);
+    }
+
+    /**
+     * @Rest\Get("/my-profile/channels")
+     * @Rest\View( serializerGroups={"list_channels"})
+     * @return View
+     */
+    public function getMyChannels()
+    {
+        return $this->userService->getMyChannels( $this->getUser() );
     }
 }

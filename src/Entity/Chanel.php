@@ -19,6 +19,7 @@ class Chanel
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @JMSAnnotation\Expose
+     * @JMSAnnotation\Groups("list_channels")
      */
     private $id;
 
@@ -26,6 +27,7 @@ class Chanel
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
      * @JMSAnnotation\Expose
+     * @JMSAnnotation\Groups("list_channels")
      */
     private $title;
 
@@ -33,18 +35,20 @@ class Chanel
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
      * @JMSAnnotation\Expose
+     * @JMSAnnotation\Groups("single_channel")
      */
     private $description;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="channels")
      * @ORM\JoinColumn(nullable=false)
+     * @JMSAnnotation\Groups("single_channel")
      * @JMSAnnotation\Expose
      */
     private $owner;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Message", mappedBy="chanel")
+     * @ORM\OneToMany(targetEntity="App\Entity\Message", mappedBy="chanel", cascade={"persist"})
      */
     private $messages;
 
@@ -60,6 +64,7 @@ class Chanel
 
     /**
      * @ORM\Column(type="boolean")
+     * @JMSAnnotation\Groups("single_channel")
      */
     private $private;
 

@@ -67,7 +67,7 @@ class ChanelService
         $this->entityManager->persist( $chanel );
         $this->entityManager->flush();
 
-        return new View($chanel);
+        return new View( $chanel);
     }
 
     /**
@@ -152,7 +152,8 @@ class ChanelService
         $result = $this
             ->entityManager
             ->getRepository(Chanel::class)
-            ->getChenals( $request->query->get('q', ''));
+            ->getChannels( $request->query->get('q', ''));
+
         return new View( $result, Response::HTTP_OK);
     }
 }

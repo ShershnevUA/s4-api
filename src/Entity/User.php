@@ -26,7 +26,7 @@ class User implements UserInterface, Serializable
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @JMSAnnotation\Expose
-     * @JMSAnnotation\Groups("default")
+     * @JMSAnnotation\Groups("users_list")
      */
     private $id;
 
@@ -34,6 +34,7 @@ class User implements UserInterface, Serializable
      * @ORM\Column(type="string", length=128, unique=true)
      * @Assert\NotBlank()
      * @JMSAnnotation\Expose
+     * @JMSAnnotation\Groups("users_list")
      */
     private $username;
 
@@ -52,6 +53,7 @@ class User implements UserInterface, Serializable
      * @Assert\Email()
      * @Assert\NotBlank()
      * @JMSAnnotation\Expose
+     * @JMSAnnotation\Groups("single_user")
      */
     private $email;
 

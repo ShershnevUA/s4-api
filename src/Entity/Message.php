@@ -16,17 +16,21 @@ class Message
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @JMSAnnotation\Expose
+     * @JMSAnnotation\Groups("list_messages")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @JMSAnnotation\Expose
+     * @JMSAnnotation\Groups("list_messages")
      */
     private $body;
 
     /**
      * @ORM\Column(type="datetime")
+     * @JMSAnnotation\Expose
+     * @JMSAnnotation\Groups("list_messages")
      */
     private $createdAt;
 
@@ -34,6 +38,7 @@ class Message
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="messages")
      * @ORM\JoinColumn(nullable=false)
      * @JMSAnnotation\Expose
+     * @JMSAnnotation\Groups("list_messages")
      */
     private $author;
 
@@ -44,7 +49,6 @@ class Message
 
     /**
      * Message constructor.
-     * @param $body
      * @param $author
      */
     public function __construct( User $author)
